@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Expenses{% endblock %}
+{% block content %}
+<h1>Expense history</h1>
+<p><a class="button" href="{% url 'expense_add' %}">Add expense</a></p>
+<section>
+    <h2>Filter</h2>
+    <form method="get">
+        {% include "form_fields.html" with form=filter_form %}
+        <button type="submit">Apply filters</button>
+        <a href="{% url 'expense_list' %}">Clear</a>
+    </form>
+</section>
+<section>
+    <h2>Expenses</h2>
+    <p><strong>Filtered total:</strong> {{ selected_currency }} {{ filtered_total|floatformat:2|intcomma }}</p>
+    {% if expenses %}
+        {% include "expense_table.html" %}
+    {% else %}
+        <p>No expenses found.</p>
+    {% endif %}
+</section>
+{% endblock %}

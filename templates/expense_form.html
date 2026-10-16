@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }}{% endblock %}
+{% block content %}
+<section class="form-page">
+    <h1>{{ heading }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% include "form_fields.html" %}
+        <button type="submit">{{ button_label }}</button>
+        <a href="{% url 'expense_list' %}">Cancel</a>
+    </form>
+</section>
+{% endblock %}
