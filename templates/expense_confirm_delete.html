@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Delete expense{% endblock %}
+
 {% block content %}
-<section class="form-page">
-    <h1>Delete expense</h1>
-    <p>Delete <strong>{{ expense.description }}</strong> ({{ expense.currency }} {{ expense.amount }})?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button class="danger" type="submit">Delete</button>
-        <a href="{% url 'expense_list' %}">Cancel</a>
-    </form>
-</section>
+<h2>Delete Expense</h2>
+<p>Are you sure you want to delete "{{ expense.description }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+    <a href="{% url 'expense_history' %}">Cancel</a>
+</form>
 {% endblock %}
