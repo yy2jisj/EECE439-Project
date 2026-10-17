@@ -1,24 +1,11 @@
-import os
 from pathlib import Path
-
-from django.core.exceptions import ImproperlyConfigured
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# These defaults are for running the assignment on your own computer.
-DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY", "django-insecure-pocketmanager-local-development-only"
-)
-if not DEBUG and not os.environ.get("DJANGO_SECRET_KEY"):
-    raise ImproperlyConfigured("Set DJANGO_SECRET_KEY when DJANGO_DEBUG is False.")
-
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]").split(",")
-    if host.strip()
-]
+SECRET_KEY = "django-insecure-assignment-3"
+DEBUG = True
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -27,8 +14,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.humanize",
-    "app1.apps.App1Config",
+    "app1",
 ]
 
 MIDDLEWARE = [
@@ -42,6 +28,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "website.urls"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -52,7 +39,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "app1.context_processors.pocketmanager",
             ],
         },
     },
@@ -61,11 +47,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "website.wsgi.application"
 ASGI_APPLICATION = "website.asgi.application"
 
-# SQLite needs no database server. An alternate file is useful for verification.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.environ.get("SQLITE_DB_PATH", str(BASE_DIR / "db.sqlite3")),
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -77,14 +62,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = os.environ.get("DJANGO_TIME_ZONE", "Asia/Beirut")
+TIME_ZONE = "Asia/Beirut"
 USE_I18N = True
 USE_TZ = True
+
+STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "dashboard"
-LOGOUT_REDIRECT_URL = "login"

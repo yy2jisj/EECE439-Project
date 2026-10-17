@@ -1,41 +1,53 @@
 {% extends "base.html" %}
-{% load humanize %}
-{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<h1>Dashboard</h1>
-<section>
-    <h2>This month</h2>
-    <p><strong>Total spending:</strong> {{ selected_currency }} {{ monthly_total|floatformat:2|intcomma }}</p>
-    <p><strong>Number of expenses:</strong> {{ expense_count }}</p>
-</section>
-<section>
-    <h2>Spending by category</h2>
+<h2>Dashboard</h2>
+
+<div class="box">
+    <h3>Total Spending This Month</h3>
+    <p>${{ total_spending|floatformat:2 }}</p>
+</div>
+
+<div class="box">
+    <h3>Spending by Category</h3>
     <table>
-        <thead><tr><th>Category</th><th>Amount</th></tr></thead>
-        <tbody>
-            {% for category in category_totals %}
-            <tr><td>{{ category.name }}</td><td>{{ selected_currency }} {{ category.total|floatformat:2|intcomma }}</td></tr>
-            {% endfor %}
-        </tbody>
+        <tr><th>Category</th><th>Total</th></tr>
+        {% for item in spending_by_category %}
+        <tr><td>{{ item.name }}</td><td>${{ item.total|floatformat:2 }}</td></tr>
+        {% endfor %}
     </table>
-</section>
-<section>
-    <h2>Recent expenses</h2>
-    {% if recent_expenses %}
-        {% include "expense_table.html" with expenses=recent_expenses %}
-    {% else %}
-        <p>No expenses yet.</p>
-    {% endif %}
-</section>
-<section>
-    <h2>Monthly summary</h2>
+</div>
+
+<div class="box">
+    <h3>Recent Expenses</h3>
     <table>
-        <thead><tr><th>Month</th><th>Expenses</th><th>Total</th></tr></thead>
-        <tbody>
-            {% for month in monthly_summary %}
-            <tr><td>{{ month.month|date:"F Y" }}</td><td>{{ month.count }}</td><td>{{ selected_currency }} {{ month.total|floatformat:2|intcomma }}</td></tr>
-            {% endfor %}
-        </tbody>
+        <tr><th>Description</th><th>Category</th><th>Amount</th><th>Date</th></tr>
+        {% for expense in recent_expenses %}
+        <tr>
+            <td>{{ expense.description }}</td>
+            <td>{{ expense.category }}</td>
+            <td>${{ expense.amount|floatformat:2 }}</td>
+            <td>{{ expense.date }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No expenses yet.</td></tr>
+        {% endfor %}
     </table>
-</section>
+</div>
+
+<div class="box">
+    <h3>Monthly Summary</h3>
+    <table>
+        <tr><th>Month</th><th>Expenses</th><th>Total</th></tr>
+        {% for item in monthly_summary %}
+        <tr>
+            <td>{{ item.month|date:"F Y" }}</td>
+            <td>{{ item.count }}</td>
+            <td>${{ item.total|floatformat:2 }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No monthly summary yet.</td></tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

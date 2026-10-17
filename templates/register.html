@@ -1,13 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+
 {% block content %}
-<section class="form-page">
-    <h1>Register</h1>
-    <form method="post">
-        {% csrf_token %}
-        {% include "form_fields.html" %}
-        <button type="submit">Create account</button>
-    </form>
-    <p>Already registered? <a href="{% url 'login' %}">Log in</a></p>
-</section>
+<h2>Register</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
 {% endblock %}
