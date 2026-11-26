@@ -2,6 +2,8 @@
 
 A Django and SQLite project based on the assignment starter: models, Django forms, function-based views, and HTML templates. Pages share a base template, navigation, and content block as in the portfolio. JavaScript handles error dialogs and repeated clicks. Assignment 7 deploys this version on Azure App Service.
 
+Live app: [Expense Tracker](https://ahmad439-expenses-c51826eb07.azurewebsites.net/).
+
 ## Run on Windows
 
 Open the project in VS Code and use its PowerShell terminal. Skip the first command if `.venv` already exists.
@@ -9,6 +11,7 @@ Open the project in VS Code and use its PowerShell terminal. Skip the first comm
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py collectstatic --noinput
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
