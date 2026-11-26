@@ -1,0 +1,20 @@
+{% if error_message %}<div class="error-summary" role="alert">{{ error_message }}</div>{% endif %}
+{% if form.non_field_errors %}
+    <div class="error-summary" role="alert">{{ form.non_field_errors }}</div>
+{% endif %}
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% if hidden.errors %}<div class="field-errors" role="alert">{{ hidden.errors }}</div>{% endif %}
+{% endfor %}
+{% for field in form.visible_fields %}
+    <div class="form-field field-{{ field.name }}{% if field.errors %} has-errors{% endif %}">
+        {{ field.label_tag }}
+        {% if field.name == 'date' or field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="field-control date-control" role="group" aria-label="{{ field.label }}">{{ field }}</div>
+        {% else %}
+            <div class="field-control">{{ field }}</div>
+        {% endif %}
+        {% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}
+        {% if field.errors %}<div class="field-errors" role="alert">{{ field.errors }}</div>{% endif %}
+    </div>
+{% endfor %}

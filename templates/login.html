@@ -1,10 +1,13 @@
 {% extends "base.html" %}
-
+{% block title %}Login | Expense Tracker{% endblock %}
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<h1>Login</h1>
+<section class="auth-form">
+    <form method="post">
+        {% csrf_token %}
+        {% include "includes/form_fields.html" %}
+        <div class="form-actions"><button type="submit">Login</button></div>
+    </form>
+    <p class="form-footnote">New here? <a href="{% url 'register' %}">Create an account</a>.</p>
+</section>
 {% endblock %}

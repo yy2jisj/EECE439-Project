@@ -1,11 +1,23 @@
+import os
 from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-assignment-3"
-DEBUG = True
-ALLOWED_HOSTS = []
+AZURE_HOST = os.environ.get("WEBSITE_HOSTNAME", "")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-local-development-only")
+if AZURE_HOST and "DJANGO_SECRET_KEY" not in os.environ:
+    raise RuntimeError("Set DJANGO_SECRET_KEY in Azure application settings.")
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = []
+if AZURE_HOST:
+    ALLOWED_HOSTS.append(AZURE_HOST)
+    CSRF_TRUSTED_ORIGINS.append("https://" + AZURE_HOST)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = bool(AZURE_HOST)
+CSRF_COOKIE_SECURE = bool(AZURE_HOST)
+SECURE_SSL_REDIRECT = bool(AZURE_HOST)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -19,6 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -50,7 +63,8 @@ ASGI_APPLICATION = "website.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.environ.get("DJANGO_DB_PATH", BASE_DIR / "db.sqlite3"),
+        "OPTIONS": {"timeout": 30},
     }
 }
 
@@ -67,5 +81,6 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 LOGIN_URL = "login"

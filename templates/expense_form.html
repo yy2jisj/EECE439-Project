@@ -1,10 +1,21 @@
 {% extends "base.html" %}
-
+{% block title %}{{ title }} | Expense Tracker{% endblock %}
 {% block content %}
-<h2>{{ title }}</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
+<h1>{{ title }}</h1>
+<p class="muted">{{ currency_label }} wallet · {{ currency }}</p>
+<section class="narrow">
+    <form method="post" data-expense-form>
+        {% csrf_token %}
+        {% include "includes/form_fields.html" %}
+        <div class="form-actions">
+            {% if editing %}
+                <button type="submit">Save changes</button>
+            {% else %}
+                <button type="submit" name="action" value="view_history">Save and view history</button>
+                <button type="submit" name="action" value="add_another">Save and add another</button>
+            {% endif %}
+            <a href="{% url 'expense_history' wallet_slug %}">Cancel</a>
+        </div>
+    </form>
+</section>
 {% endblock %}

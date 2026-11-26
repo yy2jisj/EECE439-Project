@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-
+{% block title %}Delete expense | Expense Tracker{% endblock %}
 {% block content %}
-<h2>Delete Expense</h2>
-<p>Are you sure you want to delete "{{ expense.description }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Delete</button>
-    <a href="{% url 'expense_history' %}">Cancel</a>
-</form>
+<h1>Delete expense</h1>
+<section class="narrow">
+    <p>Delete <strong>{{ expense.description }}</strong>?</p>
+    <p>{{ expense.currency }} {{ expense.amount|floatformat:"2g" }} · {{ expense.get_category_display }} · {{ expense.date|date:"d M Y" }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="version" value="{{ expense.version }}">
+        <div class="form-actions"><button type="submit">Delete expense</button><a href="{% url 'expense_history' wallet_slug %}">Cancel</a></div>
+    </form>
+</section>
 {% endblock %}

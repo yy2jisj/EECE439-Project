@@ -1,36 +1,81 @@
 {% extends "base.html" %}
-
+{% block title %}{{ currency }} Expenses | Expense Tracker{% endblock %}
 {% block content %}
-<h2>Expense History</h2>
-
-<form method="get" class="box">
-    {{ form.as_p }}
-    <button type="submit">Filter</button>
-    <a href="{% url 'expense_history' %}">Clear</a>
-</form>
-
-<table>
-    <tr>
-        <th>Description</th>
-        <th>Category</th>
-        <th>Amount</th>
-        <th>Date</th>
-        <th>Actions</th>
-    </tr>
-    {% for expense in expenses %}
-    <tr>
-        <td>{{ expense.description }}</td>
-        <td>{{ expense.category }}</td>
-        <td>${{ expense.amount|floatformat:2 }}</td>
-        <td>{{ expense.date }}</td>
-        <td>
-            <a href="{% url 'edit_expense' expense.id %}">Edit</a>
-            <a href="{% url 'delete_expense' expense.id %}">Delete</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No expenses found.</td></tr>
-    {% endfor %}
-</table>
+<div class="page-heading">
+    <h1>{{ currency }} Expenses</h1>
+    <a href="{% url 'add_expense' wallet_slug %}">Add {{ currency }} expense</a>
+</div>
+<section>
+    <h2>Filter expenses</h2>
+    <form method="get">
+        <div class="form-grid filter-grid">{% include "includes/form_fields.html" %}</div>
+        <div class="form-actions"><button type="submit">Filter</button><a href="{% url 'expense_history' wallet_slug %}">Clear filters</a></div>
+    </form>
+</section>
+<section>
+    <h2>Expense history</h2>
+    <p class="help-text">Filtered spending: <strong>{{ currency }} {{ filtered_total|floatformat:"2g" }}</strong></p>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Description</th><th scope="col">Category</th><th scope="col">Amount ({{ currency }})</th><th scope="col">Date</th><th scope="col">Actions</th></tr></thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.description }}</td><td>{{ expense.get_category_display }}</td><td class="amount">{{ expense.amount|floatformat:"2g" }}</td><td class="date">{{ expense.date|date:"d M Y" }}</td>
+                    <td class="row-actions"><a href="{% url 'edit_expense' expense.id %}">Edit</a><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>
+                </tr>
+                {% empty %}<tr><td colspan="5">{% if form.errors %}Correct the filters to view matching expenses.{% else %}No expenses found.{% endif %}</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="overall-budgets">
+    <h2>Overall budgets</h2>
+    <p class="help-text">Set a separate monthly, yearly, or all-time limit. Old monthly and yearly budgets never carry over.</p>
+    <form method="post" action="{% url 'save_overall_budget' wallet_slug %}">
+        {% csrf_token %}
+        <div class="form-grid">{% include "includes/form_fields.html" with form=overall_budget_form %}</div>
+        <div class="form-actions"><button type="submit">Save overall budget</button></div>
+    </form>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Period</th><th scope="col">Budget ({{ currency }})</th><th scope="col">Spent ({{ currency }})</th><th scope="col">Remaining ({{ currency }})</th><th scope="col">Actions</th></tr></thead>
+            <tbody>
+                {% for budget in overall_budgets %}
+                <tr>
+                    <th scope="row">{{ budget.label }}</th>
+                    <td class="amount">{% if budget.amount != None %}{{ budget.amount|floatformat:"2g" }}{% else %}-{% endif %}</td>
+                    <td class="amount">{{ budget.spent|floatformat:"2g" }}</td>
+                    <td class="amount{% if budget.over_budget %} over-budget{% endif %}">{% if budget.amount != None %}{{ budget.remaining|floatformat:"2g" }}{% if budget.over_budget %} <span class="status">Over budget</span>{% endif %}{% else %}-{% endif %}</td>
+                    <td>{% if budget.id %}<form method="post" action="{% url 'delete_overall_budget' budget.id %}">{% csrf_token %}<button type="submit" class="text-button">Remove</button></form>{% else %}-{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section id="budgets">
+    <h2>Monthly category budgets</h2>
+    <p class="help-text">{{ month_label }} - {{ currency }}. Saving a category again updates its budget.</p>
+    <form method="post" action="{% url 'save_budget' wallet_slug %}">
+        {% csrf_token %}
+        <div class="form-grid">{% include "includes/form_fields.html" with form=budget_form %}</div>
+        <div class="form-actions"><button type="submit">Save budget</button></div>
+    </form>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Category</th><th scope="col">Budget ({{ currency }})</th><th scope="col">Spent ({{ currency }})</th><th scope="col">Remaining ({{ currency }})</th><th scope="col">Actions</th></tr></thead>
+            <tbody>
+                {% for budget in budgets %}
+                <tr>
+                    <th scope="row">{{ budget.category }}</th><td class="amount">{{ budget.amount|floatformat:"2g" }}</td><td class="amount">{{ budget.spent|floatformat:"2g" }}</td>
+                    <td class="amount{% if budget.over_budget %} over-budget{% endif %}">{{ budget.remaining|floatformat:"2g" }}{% if budget.over_budget %} <span class="status">Over budget</span>{% endif %}</td>
+                    <td><form method="post" action="{% url 'delete_budget' budget.id %}">{% csrf_token %}<button type="submit" class="text-button">Remove</button></form></td>
+                </tr>
+                {% empty %}<tr><td colspan="5">No budgets set for this month.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}
 

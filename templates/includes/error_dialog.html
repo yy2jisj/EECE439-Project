@@ -1,0 +1,19 @@
+<dialog class="error-dialog" data-error-dialog aria-labelledby="error-title">
+    <h2 id="error-title">Please check your information</h2>
+    <ul>
+        {% if error_message %}<li>{{ error_message }}</li>{% endif %}
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for field in form %}
+            {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
+        {% endfor %}
+        {% for error in budget_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for field in budget_form %}
+            {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
+        {% endfor %}
+        {% for error in overall_budget_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for field in overall_budget_form %}
+            {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
+        {% endfor %}
+    </ul>
+    <button type="button" data-close-dialog autofocus>OK</button>
+</dialog>

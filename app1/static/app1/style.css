@@ -1,0 +1,350 @@
+/* Simple Django layout with a restrained portfolio palette. */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font: 15px/1.55 "Segoe UI", Tahoma, sans-serif;
+    color: #2c3e50;
+    background: #f8f9fa;
+}
+
+a {
+    color: #226a9f;
+    text-underline-offset: 2px;
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    display: inline-block;
+    padding: 7px 12px;
+    border: 1px solid #246893;
+    border-radius: 3px;
+    background: #2d78ad;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #25638d;
+}
+
+.nav-button, button.secondary {
+    background: #f0f2f4;
+    border-color: #b6c1cb;
+    color: #2c3e50;
+}
+
+.nav-button:hover, button.secondary:hover {
+    background: #e4e9ee;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+:focus-visible {
+    outline: 2px solid #2c3e50;
+    outline-offset: 3px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -60px;
+    left: 16px;
+    padding: 8px;
+    background: white;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+.site-header {
+    background: white;
+}
+
+.header-content, .main-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header-content {
+    padding-top: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #d3dbe1;
+}
+
+.site-name {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.site-header nav, .wallet-switcher, .form-actions, .page-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+[aria-current="page"] {
+    font-weight: bold;
+}
+
+.main-content {
+    margin-top: 28px;
+    margin-bottom: 45px;
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: 24px;
+}
+
+h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+p {
+    margin: 0 0 12px;
+}
+
+section {
+    margin: 26px 0;
+}
+
+.page-heading {
+    justify-content: space-between;
+}
+
+.page-heading h1, .page-heading p {
+    margin: 0;
+}
+
+.wallet-switcher {
+    margin: 18px 0;
+    gap: 20px;
+}
+
+.total {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.muted, .help-text {
+    color: #596774;
+}
+
+.help-text, .form-footnote, .field-errors {
+    font-size: 14px;
+}
+
+.help-text {
+    margin: 5px 0 12px;
+}
+
+.narrow {
+    max-width: 600px;
+}
+
+.auth-form {
+    max-width: 400px;
+}
+
+.form-field {
+    min-width: 0;
+    margin-bottom: 14px;
+}
+
+.form-field > label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+input:not([type="hidden"]), select, textarea {
+    max-width: 100%;
+    min-height: 37px;
+    padding: 6px 8px;
+    border: 1px solid #aebbc6;
+    border-radius: 3px;
+    background: white;
+    color: #2c3e50;
+}
+
+input:not([type="hidden"]), textarea, .field-control > select {
+    width: 100%;
+}
+
+.date-control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.date-control > input[name$="_day"] {
+    width: 64px;
+}
+
+.date-control > select[name$="_month"] {
+    width: 88px;
+}
+
+.date-control > input[name$="_year"] {
+    width: 84px;
+}
+
+.form-grid {
+    display: grid;
+    max-width: 600px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+}
+
+.filter-grid .field-category, .form-grid > .error-summary {
+    grid-column: 1 / -1;
+}
+
+.form-footnote {
+    margin-top: 20px;
+}
+
+.message, .error-summary {
+    padding: 9px 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ccd5dd;
+    background: white;
+}
+
+.error-summary, .message.error, .field-errors, .over-budget {
+    color: #8a1f17;
+}
+
+.has-errors input, .has-errors select, .has-errors textarea {
+    border-color: #8a1f17;
+}
+
+.field-errors {
+    margin-top: 5px;
+}
+
+.error-summary ul, .field-errors ul, .help-text ul {
+    margin: 4px 0;
+    padding-left: 20px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    padding: 9px 11px;
+    border-bottom: 1px solid #dbe2e8;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+thead th {
+    background: #eef2f5;
+    border-bottom: 1px solid #becbd5;
+    white-space: nowrap;
+}
+
+tbody th {
+    font-weight: normal;
+}
+
+.amount, .date, .row-actions {
+    white-space: nowrap;
+}
+
+.amount {
+    font-variant-numeric: tabular-nums;
+}
+
+.status {
+    font-size: 13px;
+}
+
+.row-actions a + a {
+    margin-left: 10px;
+}
+
+.text-button, .text-button:hover {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #226a9f;
+    text-decoration: underline;
+}
+
+#budgets, #overall-budgets {
+    padding-top: 20px;
+    border-top: 1px solid #d3dbe1;
+    scroll-margin-top: 20px;
+}
+
+#budgets .table-wrap, #overall-budgets .table-wrap {
+    margin-top: 16px;
+}
+
+.profile-details {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+}
+
+.profile-details dt {
+    font-weight: bold;
+}
+
+.profile-details dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.error-dialog {
+    width: calc(100% - 32px);
+    max-width: 480px;
+    padding: 20px;
+    border: 1px solid #aebbc6;
+    color: #2c3e50;
+}
+
+.error-dialog::backdrop {
+    background: rgba(0, 0, 0, .35);
+}
+
+.error-dialog ul {
+    padding-left: 20px;
+}
+
+@media (max-width: 650px) {
+    .header-content, .main-content {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

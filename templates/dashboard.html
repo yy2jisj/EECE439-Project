@@ -1,53 +1,82 @@
 {% extends "base.html" %}
-
+{% block title %}Dashboard | Expense Tracker{% endblock %}
 {% block content %}
-<h2>Dashboard</h2>
-
-<div class="box">
-    <h3>Total Spending This Month</h3>
-    <p>${{ total_spending|floatformat:2 }}</p>
+<div class="page-heading">
+    <div><h1>Dashboard</h1><p class="muted">Hello, {{ user.first_name|default:user.username }} · {{ month_label }}</p></div>
+    <a href="{% url 'add_expense' wallet_slug %}">Add {{ currency }} expense</a>
 </div>
-
-<div class="box">
-    <h3>Spending by Category</h3>
-    <table>
-        <tr><th>Category</th><th>Total</th></tr>
-        {% for item in spending_by_category %}
-        <tr><td>{{ item.name }}</td><td>${{ item.total|floatformat:2 }}</td></tr>
-        {% endfor %}
-    </table>
-</div>
-
-<div class="box">
-    <h3>Recent Expenses</h3>
-    <table>
-        <tr><th>Description</th><th>Category</th><th>Amount</th><th>Date</th></tr>
-        {% for expense in recent_expenses %}
-        <tr>
-            <td>{{ expense.description }}</td>
-            <td>{{ expense.category }}</td>
-            <td>${{ expense.amount|floatformat:2 }}</td>
-            <td>{{ expense.date }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4">No expenses yet.</td></tr>
-        {% endfor %}
-    </table>
-</div>
-
-<div class="box">
-    <h3>Monthly Summary</h3>
-    <table>
-        <tr><th>Month</th><th>Expenses</th><th>Total</th></tr>
-        {% for item in monthly_summary %}
-        <tr>
-            <td>{{ item.month|date:"F Y" }}</td>
-            <td>{{ item.count }}</td>
-            <td>${{ item.total|floatformat:2 }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">No monthly summary yet.</td></tr>
-        {% endfor %}
-    </table>
-</div>
+<nav class="wallet-switcher" aria-label="Choose dashboard wallet">
+    {% for wallet in wallet_links %}
+        <a href="{% url 'dashboard' %}?wallet={{ wallet.slug }}" {% if wallet.slug == wallet_slug %}aria-current="page"{% endif %}>{{ wallet.currency }} wallet</a>
+    {% endfor %}
+</nav>
+<section aria-label="{{ currency }} monthly totals">
+    <h2>Total spending this month</h2>
+    <p class="total">{{ currency }} {{ total_spending|floatformat:"2g" }}</p>
+</section>
+<section>
+    <h2>Overall budgets</h2>
+    <p class="help-text"><a href="{% url 'expense_history' wallet_slug %}#overall-budgets">Manage overall budgets</a></p>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Period</th><th scope="col">Spent ({{ currency }})</th><th scope="col">Budget ({{ currency }})</th><th scope="col">Remaining ({{ currency }})</th></tr></thead>
+            <tbody>
+                {% for item in overall_budgets %}
+                <tr>
+                    <th scope="row">{{ item.label }}</th><td class="amount">{{ item.spent|floatformat:"2g" }}</td>
+                    <td class="amount">{% if item.amount != None %}{{ item.amount|floatformat:"2g" }}{% else %}-{% endif %}</td>
+                    <td class="amount{% if item.over_budget %} over-budget{% endif %}">{% if item.amount != None %}{{ item.remaining|floatformat:"2g" }}{% if item.over_budget %} <span class="status">Over budget</span>{% endif %}{% else %}-{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section>
+    <h2>Spending by category</h2>
+    <p class="help-text">{{ month_label }} · <a href="{% url 'expense_history' wallet_slug %}#budgets">Manage budgets</a></p>
+    {% if top_category %}<p>Highest spending category: <strong>{{ top_category.name }}</strong> ({{ currency }} {{ top_category.total|floatformat:"2g" }}).</p>{% endif %}
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Category</th><th scope="col">Spent ({{ currency }})</th><th scope="col">Budget ({{ currency }})</th><th scope="col">Remaining ({{ currency }})</th></tr></thead>
+            <tbody>
+                {% for item in spending_by_category %}
+                <tr>
+                    <th scope="row">{{ item.name }}</th>
+                    <td class="amount">{{ item.total|floatformat:"2g" }}</td>
+                    <td class="amount">{% if item.budget != None %}{{ item.budget|floatformat:"2g" }}{% else %}—{% endif %}</td>
+                    <td class="amount{% if item.over_budget %} over-budget{% endif %}">{% if item.budget != None %}{{ item.remaining|floatformat:"2g" }}{% if item.over_budget %} <span class="status">Over budget</span>{% endif %}{% else %}—{% endif %}</td>
+                </tr>
+                {% empty %}<tr><td colspan="4">No spending this month.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section>
+    <h2>Recent expenses</h2>
+    <p class="help-text"><a href="{% url 'expense_history' wallet_slug %}">View {{ currency }} history</a></p>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Description</th><th scope="col">Category</th><th scope="col">Amount ({{ currency }})</th><th scope="col">Date</th></tr></thead>
+            <tbody>
+                {% for expense in recent_expenses %}
+                <tr><td>{{ expense.description }}</td><td>{{ expense.get_category_display }}</td><td class="amount">{{ expense.amount|floatformat:"2g" }}</td><td class="date">{{ expense.date|date:"d M Y" }}</td></tr>
+                {% empty %}<tr><td colspan="4">No expenses yet. <a href="{% url 'add_expense' wallet_slug %}">Add an expense</a>.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<section>
+    <h2>Monthly summary</h2>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th scope="col">Month</th><th scope="col">Expenses</th><th scope="col">Spent ({{ currency }})</th></tr></thead>
+            <tbody>
+                {% for item in monthly_summary %}
+                <tr><th scope="row">{{ item.month|date:"F Y" }}</th><td>{{ item.count }}</td><td class="amount">{{ item.total|floatformat:"2g" }}</td></tr>
+                {% empty %}<tr><td colspan="3">No monthly summary yet.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}
